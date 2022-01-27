@@ -1,5 +1,6 @@
 package com.luizcarloscavalcanti.simpledex;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,8 +33,6 @@ public class DetailActivity extends AppCompatActivity {
 
     private static final String TAG = "POKEDEX";
     private Retrofit retrofit;
-    private RecyclerView recyclerView;
-    private RecyclerView recyclerViewStats;
     private ListTypeAdapter listTypeAdapter;
     private ListStatsAdapter listStatsAdapter;
 
@@ -44,8 +43,8 @@ public class DetailActivity extends AppCompatActivity {
 
         ImageView imageView = findViewById(R.id.imageView);
         TextView textView = findViewById(R.id.textView);
-        recyclerView = findViewById(R.id.recyclerType);
-        recyclerViewStats = findViewById(R.id.recyclerStats);
+        RecyclerView recyclerView = findViewById(R.id.recyclerType);
+        RecyclerView recyclerViewStats = findViewById(R.id.recyclerStats);
 
         final GridLayoutManager layoutManagerType = new GridLayoutManager(this, 3);
         final GridLayoutManager layoutManagerStat = new GridLayoutManager(this, 3);
@@ -59,6 +58,7 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final Pokemon pokemon = intent.getParcelableExtra("Pokemon");
 
+        assert pokemon != null;
         int number = pokemon.getNumber();
         String t1 = pokemon.getName();
 
@@ -92,11 +92,12 @@ public class DetailActivity extends AppCompatActivity {
 
         typeAnswerCall.enqueue(new Callback<TypeAnswer>() {
             @Override
-            public void onResponse(Call<TypeAnswer> call, Response<TypeAnswer> response) {
+            public void onResponse(@NonNull Call<TypeAnswer> call, @NonNull Response<TypeAnswer> response) {
 
                 if (response.isSuccessful()){
 
                     TypeAnswer typeAnswer = response.body();
+                    assert typeAnswer != null;
                     ArrayList<Type> pokemontype = typeAnswer.getTypes();
 
                     listTypeAdapter.addInfoList(pokemontype);
@@ -112,7 +113,7 @@ public class DetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<TypeAnswer> call, Throwable t) {
+            public void onFailure(@NonNull Call<TypeAnswer> call, @NonNull Throwable t) {
 
                 Log.e(TAG, " onFailure: " + t.getMessage());
             }
@@ -125,11 +126,12 @@ public class DetailActivity extends AppCompatActivity {
 
         statsAnswerCall.enqueue(new Callback<StatsAnswer>() {
             @Override
-            public void onResponse(Call<StatsAnswer> call, Response<StatsAnswer> response) {
+            public void onResponse(@NonNull Call<StatsAnswer> call, @NonNull Response<StatsAnswer> response) {
 
                 if (response.isSuccessful()){
 
                     StatsAnswer statsAnswer = response.body();
+                    assert statsAnswer != null;
                     ArrayList<Stat> pokemonStat = statsAnswer.getStats();
 
                     listStatsAdapter.addStatsList(pokemonStat);
@@ -145,7 +147,7 @@ public class DetailActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<StatsAnswer> call, Throwable t) {
+            public void onFailure(@NonNull Call<StatsAnswer> call, @NonNull Throwable t) {
 
                 Log.e(TAG, " onFailure: " + t.getMessage());
             }

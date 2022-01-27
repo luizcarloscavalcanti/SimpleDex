@@ -31,9 +31,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "POKEDEX";
 
-    private Toolbar mToolbar;
-    private Toolbar mToolbarBottom;
-
     private Retrofit retrofit;
 
     private RecyclerView recyclerView;
@@ -48,13 +45,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mToolbar = findViewById(R.id.tb_main);
+        Toolbar mToolbar = findViewById(R.id.tb_main);
         mToolbar.setTitle("Simple Dex");
         mToolbar.setSubtitle("PokéDex");
         mToolbar.setLogo(R.drawable.ic_pokedex);
         setSupportActionBar(mToolbar);
 
-        mToolbarBottom = findViewById(R.id.inc_tb_bottom);
+        Toolbar mToolbarBottom = findViewById(R.id.inc_tb_bottom);
         mToolbarBottom.findViewById(R.id.iv_top).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,11 +148,12 @@ public class MainActivity extends AppCompatActivity {
 
             pokemonAnswerCall.enqueue(new Callback<PokemonAnswer>() {
                 @Override
-                public void onResponse(Call<PokemonAnswer> call, Response<PokemonAnswer> response) {
+                public void onResponse(@NonNull Call<PokemonAnswer> call, @NonNull Response<PokemonAnswer> response) {
                     aptCharge = true;
                     if (response.isSuccessful()){
 
                         PokemonAnswer pokemonAnswer = response.body();
+                        assert pokemonAnswer != null;
                         ArrayList<Pokemon> pokemonList = pokemonAnswer.getResults();
 
                         listPokemonAdapter.addPokemonList(pokemonList);
@@ -171,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailure(Call<PokemonAnswer> call, Throwable t) {
+                public void onFailure(@NonNull Call<PokemonAnswer> call, Throwable t) {
                     aptCharge = true;
                     Log.e(TAG, " onFailure: " + t.getMessage());
                 }

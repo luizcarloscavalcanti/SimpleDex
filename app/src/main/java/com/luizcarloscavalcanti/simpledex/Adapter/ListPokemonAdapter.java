@@ -10,6 +10,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,11 +26,10 @@ import java.util.Comparator;
 
 public class ListPokemonAdapter extends RecyclerView.Adapter<ListPokemonAdapter.ViewHolder> implements Filterable{
 
-    private ArrayList<Pokemon> dataset;
-    private ArrayList<Pokemon> datasetFull;
-    private Pokemon p;
+    private final ArrayList<Pokemon> dataset;
+    private final ArrayList<Pokemon> datasetFull;
 
-    private Context context;
+    private final Context context;
 
     public ListPokemonAdapter(Context context) {
         this.context = context;
@@ -37,6 +37,7 @@ public class ListPokemonAdapter extends RecyclerView.Adapter<ListPokemonAdapter.
         datasetFull = new ArrayList<>(dataset);
     }
 
+    @NonNull
     @Override
     public ListPokemonAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_pokemon, parent, false);
@@ -45,8 +46,8 @@ public class ListPokemonAdapter extends RecyclerView.Adapter<ListPokemonAdapter.
 
     @Override
     public void onBindViewHolder(ListPokemonAdapter.ViewHolder holder, final int position) {
-        p = dataset.get(position);
-        holder.namePokemon.setText(p.getNumber() + " " +p.getName());
+        Pokemon p = dataset.get(position);
+        holder.namePokemon.setText(context.getString(R.string.pokemon_name, p.getNumber(), p.getName()));
 
         Glide.with(context)
                 .load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" + p.getNumber() + ".png")
@@ -69,28 +70,25 @@ public class ListPokemonAdapter extends RecyclerView.Adapter<ListPokemonAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-    private ImageView photoPokemon;
-    private TextView namePokemon;
-    private CardView tables;
+    private final ImageView photoPokemon;
+    private final TextView namePokemon;
 
-    public ViewHolder(View itemView) {
+        public ViewHolder(View itemView) {
         super(itemView);
 
         photoPokemon = itemView.findViewById(R.id.photoPokemon);
         namePokemon = itemView.findViewById(R.id.namePokemon);
-        tables = itemView.findViewById(R.id.tables);
+            CardView tables = itemView.findViewById(R.id.tables);
         itemView.setOnClickListener(this);
 
      }
 
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.tables:
-                    Intent intent = new Intent(v.getContext(), DetailActivity.class);
-                    intent.putExtra("Pokemon", dataset.get(getAdapterPosition()));
-                    v.getContext().startActivity(intent);
-                    break;
+            if (v.getId() == R.id.tables) {
+                Intent intent = new Intent(v.getContext(), DetailActivity.class);
+                intent.putExtra("Pokemon", dataset.get(getAdapterPosition()));
+                v.getContext().startActivity(intent);
             }
         }
     }
@@ -100,7 +98,7 @@ public class ListPokemonAdapter extends RecyclerView.Adapter<ListPokemonAdapter.
         return searchFilter;
     }
 
-    private Filter searchFilter = new Filter() {
+    private final Filter searchFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             ArrayList<Pokemon> filteredList = new ArrayList<>();
@@ -144,7 +142,7 @@ public class ListPokemonAdapter extends RecyclerView.Adapter<ListPokemonAdapter.
         Collections.sort(dataset, new Comparator<Pokemon>() {
             @Override
             public int compare(Pokemon p1, Pokemon p2){
-                return - Integer.valueOf(p2.getNumber()).compareTo(Integer.valueOf(p1.getNumber()));
+                return -Integer.compare(p2.getNumber(), p1.getNumber());
             }
         });
     }
